@@ -31,17 +31,17 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <div className="eyebrow"><span /> AI Receptionist • Never Miss Another Call</div>
-          <h1>Your AI <em>Receptionist.</em></h1>
-          <p>Krovoro answers every call, books appointments, qualifies leads, and follows up automatically—24 hours a day, 7 days a week.</p>
+          <div className="eyebrow"><span /> AI infrastructure for ambitious businesses</div>
+          <h1>Intelligence that <em>works for you.</em></h1>
+          <p>Krovoro builds AI employees, automation, and business systems that help organizations move faster, serve better, and scale with control.</p>
           <div className="actions">
-            <a className="btn primary" href="#contact">Book a Demo <Arrow /></a>
-            <a className="btn secondary" href="#capabilities">See It In Action</a>
+            <a className="btn primary" href="#contact">Build with Krovoro <Arrow /></a>
+            <a className="btn secondary" href="#capabilities">Explore capabilities</a>
           </div>
-          <div className="trust">
-  <span>Answers Every Call</span>
-  <span>Books Appointments</span>
-  <span>Works 24/7</span>
+         <div className="trust">
+  <span>Built for real operations</span>
+  <span>Private infrastructure</span>
+  <span>Human-centered automation</span>
 </div>
         </div>
 
