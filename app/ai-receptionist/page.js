@@ -602,7 +602,7 @@ export default function AIReceptionist() {
       <div className="actions">
 
         <a className="btn primary" href="#contact">
-          Book a Live Demo <Arrow />
+          Book a Live Demo ↗
         </a>
 
         <a className="btn secondary" href="/">
