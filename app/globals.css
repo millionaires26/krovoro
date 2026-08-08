@@ -12,3 +12,16 @@
     opacity:.55;
   }
 }
+
+.node{
+  animation:krovoroNodePulse 3s ease-in-out infinite;
+}
+
+@keyframes krovoroNodePulse{
+  0%,100%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.04);
+  }
+}
