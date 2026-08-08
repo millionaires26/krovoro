@@ -29,3 +29,17 @@
 .n2{animation-delay:.35s;}
 .n3{animation-delay:.7s;}
 .n4{animation-delay:1.05s;}
+.core{
+  animation:krovoroCoreGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes krovoroCoreGlow{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:0 0 18px rgba(86,210,255,.18);
+  }
+  50%{
+    transform:scale(1.06);
+    box-shadow:0 0 38px rgba(86,210,255,.48);
+  }
+}
