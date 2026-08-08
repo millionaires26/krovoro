@@ -132,7 +132,20 @@ export default function AIReceptionist() {
         </div>
 
       </section>
-<section className="section" id="demo">
+<section className="ticker" aria-label="Industries Krovoro serves">
+  <span>BUILT FOR</span>
+  <i />
+  <span>DENTAL</span>
+  <i />
+  <span>MEDICAL</span>
+  <i />
+  <span>LEGAL</span>
+  <i />
+  <span>HOME SERVICES</span>
+  <i />
+  <span>REAL ESTATE</span>
+</section>
+                <section className="section" id="demo">
 
   <div className="section-top">
 
