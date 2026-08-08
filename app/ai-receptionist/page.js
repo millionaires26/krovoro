@@ -51,7 +51,7 @@ export default function AIReceptionist() {
           </div>
 
                 </div>
-        </div>
+      
 
         <div className="system-card">
 
