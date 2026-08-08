@@ -180,24 +180,16 @@ export default function BookingPage() {
                   ◷
                 </div>
 
-                <strong
-                  style={{
-                    display: "block",
-                    fontSize: "20px",
-                    marginBottom: "9px",
-                  }}
-                >
-                  Krovoro Scheduling
-                </strong>
-
-                <span
-                  style={{
-                    color: "#8193a7",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  Calendar connection is the next step.
-                </span>
+                <iframe
+  src="https://cal.com/krovoro/30min?embed=true"
+  style={{
+    width: "100%",
+    height: "650px",
+    border: "0",
+    borderRadius: "16px",
+  }}
+  title="Book a Krovoro Demo"
+/>
               </div>
             </div>
           </div>
