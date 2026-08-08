@@ -26,7 +26,7 @@ export default function AIReceptionist() {
 
             <a
               className="btn primary"
-              href="#demo"
+              href="https://book.krovoro.com"
             >
               Book a Demo
             </a>
@@ -49,7 +49,27 @@ export default function AIReceptionist() {
             <span>Works 24/7</span>
 
           </div>
+<div className="social-proof">
+  <div className="stars">★★★★★</div>
+  <p>Trusted by businesses that never want to miss an opportunity.</p>
 
+  <div className="industry-list">
+    <span>Dental</span>
+    <span>Medical</span>
+    <span>Legal</span>
+    <span>HVAC</span>
+    <span>Roofing</span>
+    <span>Real Estate</span>
+  </div>
+<div className="customer-logos">
+  <div className="customer-logo">DENTAL</div>
+  <div className="customer-logo">MEDICAL</div>
+  <div className="customer-logo">LEGAL</div>
+  <div className="customer-logo">HVAC</div>
+  <div className="customer-logo">ROOFING</div>
+  <div className="customer-logo">REAL ESTATE</div>
+</div>
+                </div>
         </div>
 
         <div className="system-card">
@@ -72,7 +92,7 @@ export default function AIReceptionist() {
 
             <div className="core">
 
-              <strong>☎</strong>
+              <strong className="core-phone">K</strong>
 
               <small>
                 AI
@@ -239,7 +259,7 @@ export default function AIReceptionist() {
 
         <div className="progress">
 
-          <span />
+          <span className="progress-fill" />
 
         </div>
 
@@ -636,6 +656,14 @@ export default function AIReceptionist() {
   </small>
 
 </footer>
-          </main>
-  );
+         <a
+  className="krovoro-chat"
+  href="https://chat.krovoro.com"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Ask Krovoro AI
+</a>
+ </main>
+    );
 }
