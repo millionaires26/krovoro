@@ -25,3 +25,7 @@
     transform:scale(1.12);
   }
 }
+.n1{animation-delay:0s;}
+.n2{animation-delay:.35s;}
+.n3{animation-delay:.7s;}
+.n4{animation-delay:1.05s;}
