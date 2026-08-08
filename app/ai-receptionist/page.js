@@ -49,26 +49,7 @@ export default function AIReceptionist() {
             <span>Works 24/7</span>
 
           </div>
-<div className="social-proof">
-  <div className="stars">★★★★★</div>
-  <p>Trusted by businesses that never want to miss an opportunity.</p>
 
-  <div className="industry-list">
-    <span>Dental</span>
-    <span>Medical</span>
-    <span>Legal</span>
-    <span>HVAC</span>
-    <span>Roofing</span>
-    <span>Real Estate</span>
-  </div>
-<div className="customer-logos">
-  <div className="customer-logo">DENTAL</div>
-  <div className="customer-logo">MEDICAL</div>
-  <div className="customer-logo">LEGAL</div>
-  <div className="customer-logo">HVAC</div>
-  <div className="customer-logo">ROOFING</div>
-  <div className="customer-logo">REAL ESTATE</div>
-</div>
                 </div>
         </div>
 
