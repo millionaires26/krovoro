@@ -1,9 +1,11 @@
+import { NextResponse } from "next/server";
+
 export async function POST(request) {
   const supabaseUrl = process.env.KROVORO_SUPABASE_URL;
   const anonKey = process.env.KROVORO_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !anonKey) {
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         message: "Authentication service is not configured.",
@@ -18,7 +20,7 @@ export async function POST(request) {
     const password = body?.password;
 
     if (!email || !password) {
-      return Response.json(
+      return NextResponse.json(
         {
           success: false,
           message: "Email and password are required.",
@@ -27,7 +29,7 @@ export async function POST(request) {
       );
     }
 
-    const response = await fetch(
+    const authResponse = await fetch(
       `${supabaseUrl}/auth/v1/token?grant_type=password`,
       {
         method: "POST",
@@ -43,10 +45,10 @@ export async function POST(request) {
       }
     );
 
-    const data = await response.json();
+    const data = await authResponse.json();
 
-    if (!response.ok) {
-      return Response.json(
+    if (!authResponse.ok) {
+      return NextResponse.json(
         {
           success: false,
           message: "Invalid email or password.",
@@ -55,20 +57,44 @@ export async function POST(request) {
       );
     }
 
-    return Response.json({
+    if (!data.access_token || !data.refresh_token) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Authentication service returned an invalid session.",
+        },
+        { status: 502 }
+      );
+    }
+
+    const response = NextResponse.json({
       success: true,
       message: "Login successful.",
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresIn: data.expires_in,
-      tokenType: data.token_type,
       user: {
         id: data.user?.id,
         email: data.user?.email,
       },
     });
+
+    response.cookies.set("krovoro_access_token", data.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: data.expires_in || 3600,
+    });
+
+    response.cookies.set("krovoro_refresh_token", data.refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+
+    return response;
   } catch {
-    return Response.json(
+    return NextResponse.json(
       {
         success: false,
         message: "Authentication service unavailable.",
