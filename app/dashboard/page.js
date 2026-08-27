@@ -55,6 +55,10 @@ export default async function DashboardPage() {
   <a href="/leads">View Leads</a>
 </p>
 
+<p>
+  <a href="/contacts">View Contacts</a>
+</p>
+
 <LogoutButton />
     </main>
   );
