@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { getKrovoroAuthContext } from "../../../lib/krovoro-auth";
 
@@ -39,7 +40,6 @@ export async function GET() {
       );
     }
 
-    const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
 
     const accessToken = cookieStore.get(
@@ -60,11 +60,33 @@ export async function GET() {
       `${supabaseUrl}/rest/v1/leads`
     );
 
-    leadsUrl.searchParams.set("select", "*");
+    leadsUrl.searchParams.set(
+      "select",
+      [
+        "id",
+        "created_at",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "source",
+        "message",
+        "status",
+        "updated_at",
+        "estimated_value",
+        "probability",
+        "expected_close_date",
+        "won_at",
+        "lost_at",
+        "lost_reason",
+      ].join(",")
+    );
+
     leadsUrl.searchParams.set(
       "organization_id",
       `eq.${auth.organization.id}`
     );
+
     leadsUrl.searchParams.set(
       "order",
       "created_at.desc"
@@ -84,6 +106,11 @@ export async function GET() {
     );
 
     if (!leadsResponse.ok) {
+      console.error(
+        "Supabase leads request failed:",
+        leadsResponse.status
+      );
+
       return NextResponse.json(
         {
           success: false,
@@ -97,11 +124,6 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      organization: {
-        id: auth.organization.id,
-        name: auth.organization.name,
-        slug: auth.organization.slug,
-      },
       count: leads.length,
       leads,
     });
