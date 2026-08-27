@@ -61,26 +61,28 @@ export async function GET() {
     );
 
     leadsUrl.searchParams.set(
-      "select",
-      [
-        "id",
-        "created_at",
-        "first_name",
-        "last_name",
-        "email",
-        "phone",
-        "source",
-        "message",
-        "status",
-        "updated_at",
-        "estimated_value",
-        "probability",
-        "expected_close_date",
-        "won_at",
-        "lost_at",
-        "lost_reason",
-      ].join(",")
-    );
+  "select",
+  [
+    "id",
+    "created_at",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "source",
+    "message",
+    "status",
+    "updated_at",
+    "estimated_value",
+    "probability",
+    "expected_close_date",
+    "won_at",
+    "lost_at",
+    "lost_reason",
+    "pipeline:pipelines(name)",
+    "stage:pipeline_stages(name,position,stage_type)",
+  ].join(",")
+);
 
     leadsUrl.searchParams.set(
       "organization_id",
