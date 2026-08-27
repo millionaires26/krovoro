@@ -29,7 +29,7 @@ export default function LoginPage() {
         return;
       }
 
-      setMessage("Login successful.");
+      window.location.href = "/dashboard";
     } catch {
       setMessage("Unable to connect to the authentication service.");
     } finally {
