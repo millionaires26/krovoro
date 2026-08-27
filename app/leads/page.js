@@ -66,8 +66,8 @@ export default async function LeadsPage() {
     "won_at",
     "lost_at",
     "lost_reason",
-    "pipeline:pipelines(name)",
-    "stage:pipeline_stages(name,position,stage_type)",
+    "pipeline:pipelines!leads_pipeline_organization_fkey(name)",
+"stage:pipeline_stages!leads_stage_organization_fkey(name,position,stage_type)",
   ].join(",")
 );
 
