@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import LogoutButton from "../components/LogoutButton";
@@ -30,41 +31,72 @@ export default async function LeadsPage() {
     );
   }
 
-  const response = await fetch(
-    "https://krovoro.com/api/leads",
-    {
-      cache: "no-store",
-      headers: {
-        cookie: (await import("next/headers"))
-          .then(async ({ cookies }) => {
-            const cookieStore = await cookies();
+  const supabaseUrl = process.env.KROVORO_SUPABASE_URL;
+  const anonKey = process.env.KROVORO_SUPABASE_ANON_KEY;
 
-            return cookieStore
-              .getAll()
-              .map(
-                (cookie) =>
-                  `${cookie.name}=${cookie.value}`
-              )
-              .join("; ");
-          }),
-      },
-    }
+  if (!supabaseUrl || !anonKey) {
+    throw new Error("Krovoro database configuration is missing.");
+  }
+
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("krovoro_access_token")?.value;
+
+  if (!accessToken) {
+    redirect("/login");
+  }
+
+  const leadsUrl = new URL(`${supabaseUrl}/rest/v1/leads`);
+
+  leadsUrl.searchParams.set(
+    "select",
+    [
+      "id",
+      "created_at",
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "source",
+      "message",
+      "status",
+      "updated_at",
+      "estimated_value",
+      "probability",
+      "expected_close_date",
+      "won_at",
+      "lost_at",
+      "lost_reason",
+    ].join(",")
   );
+
+  leadsUrl.searchParams.set(
+    "organization_id",
+    `eq.${auth.organization.id}`
+  );
+
+  leadsUrl.searchParams.set("order", "created_at.desc");
+  leadsUrl.searchParams.set("limit", "100");
+
+  const response = await fetch(leadsUrl.toString(), {
+    headers: {
+      apikey: anonKey,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  });
 
   if (!response.ok) {
     throw new Error("Unable to load Krovoro leads.");
   }
 
-  const data = await response.json();
-  const leads = data.leads || [];
+  const leads = await response.json();
 
   return (
     <main>
       <h1>Leads</h1>
 
       <p>
-        Organization:{" "}
-        <strong>{auth.organization.name}</strong>
+        Organization: <strong>{auth.organization.name}</strong>
       </p>
 
       <p>
@@ -97,18 +129,13 @@ export default async function LeadsPage() {
               </td>
 
               <td>{lead.email || "—"}</td>
-
               <td>{lead.phone || "—"}</td>
-
               <td>{lead.source || "—"}</td>
-
               <td>{lead.status || "—"}</td>
 
               <td>
                 {lead.created_at
-                  ? new Date(
-                      lead.created_at
-                    ).toLocaleString()
+                  ? new Date(lead.created_at).toLocaleString()
                   : "—"}
               </td>
             </tr>
