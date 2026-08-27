@@ -1,0 +1,214 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+import LogoutButton from "../components/LogoutButton";
+import { getKrovoroAuthContext } from "../../lib/krovoro-auth";
+
+export const dynamic = "force-dynamic";
+
+export default async function PipelinesPage() {
+  const auth = await getKrovoroAuthContext();
+
+  if (!auth.authenticated) {
+    if (auth.reason === "invalid_access_token") {
+      redirect("/auth/refresh");
+    }
+
+    redirect("/login");
+  }
+
+  if (!auth.authorized) {
+    return (
+      <main>
+        <h1>Access unavailable</h1>
+
+        <p>
+          Your account is not assigned to an active Krovoro organization.
+        </p>
+
+        <LogoutButton />
+      </main>
+    );
+  }
+
+  const supabaseUrl = process.env.KROVORO_SUPABASE_URL;
+  const anonKey = process.env.KROVORO_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !anonKey) {
+    throw new Error("Krovoro database configuration is missing.");
+  }
+
+  const cookieStore = await cookies();
+
+  const accessToken = cookieStore.get(
+    "krovoro_access_token"
+  )?.value;
+
+  if (!accessToken) {
+    redirect("/login");
+  }
+
+  const pipelinesUrl = new URL(
+    `${supabaseUrl}/rest/v1/pipelines`
+  );
+
+  pipelinesUrl.searchParams.set(
+    "select",
+    [
+      "id",
+      "name",
+      "description",
+      "is_default",
+      "is_active",
+      "created_at",
+      "updated_at",
+    ].join(",")
+  );
+
+  pipelinesUrl.searchParams.set(
+    "organization_id",
+    `eq.${auth.organization.id}`
+  );
+
+  pipelinesUrl.searchParams.set(
+    "order",
+    "created_at.asc"
+  );
+
+  const pipelinesResponse = await fetch(
+    pipelinesUrl.toString(),
+    {
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!pipelinesResponse.ok) {
+    throw new Error("Unable to load Krovoro pipelines.");
+  }
+
+  const pipelines = await pipelinesResponse.json();
+
+  const stagesUrl = new URL(
+    `${supabaseUrl}/rest/v1/pipeline_stages`
+  );
+
+  stagesUrl.searchParams.set(
+    "select",
+    [
+      "id",
+      "pipeline_id",
+      "name",
+      "position",
+      "stage_type",
+      "is_active",
+      "created_at",
+    ].join(",")
+  );
+
+  stagesUrl.searchParams.set(
+    "organization_id",
+    `eq.${auth.organization.id}`
+  );
+
+  stagesUrl.searchParams.set(
+    "order",
+    "position.asc"
+  );
+
+  const stagesResponse = await fetch(
+    stagesUrl.toString(),
+    {
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!stagesResponse.ok) {
+    throw new Error("Unable to load Krovoro pipeline stages.");
+  }
+
+  const stages = await stagesResponse.json();
+
+  const pipelineData = pipelines.map((pipeline) => ({
+    ...pipeline,
+    stages: stages.filter(
+      (stage) => stage.pipeline_id === pipeline.id
+    ),
+  }));
+
+  return (
+    <main>
+      <h1>Pipelines</h1>
+
+      <p>
+        Organization:{" "}
+        <strong>{auth.organization.name}</strong>
+      </p>
+
+      <p>
+        Total pipelines: <strong>{pipelineData.length}</strong>
+      </p>
+
+      <p>
+        <a href="/dashboard">Back to Dashboard</a>
+      </p>
+
+      {pipelineData.length === 0 ? (
+        <p>No pipelines are configured.</p>
+      ) : (
+        pipelineData.map((pipeline) => (
+          <section key={pipeline.id}>
+            <h2>{pipeline.name}</h2>
+
+            {pipeline.description && (
+              <p>{pipeline.description}</p>
+            )}
+
+            <p>
+              Default:{" "}
+              <strong>{pipeline.is_default ? "Yes" : "No"}</strong>
+              {" | "}
+              Status:{" "}
+              <strong>
+                {pipeline.is_active ? "Active" : "Inactive"}
+              </strong>
+            </p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Stage</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {pipeline.stages.map((stage) => (
+                  <tr key={stage.id}>
+                    <td>{stage.position}</td>
+                    <td>{stage.name}</td>
+                    <td>{stage.stage_type || "—"}</td>
+                    <td>
+                      {stage.is_active ? "Active" : "Inactive"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        ))
+      )}
+
+      <LogoutButton />
+    </main>
+  );
+}
