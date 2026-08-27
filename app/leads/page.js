@@ -47,27 +47,29 @@ export default async function LeadsPage() {
 
   const leadsUrl = new URL(`${supabaseUrl}/rest/v1/leads`);
 
-  leadsUrl.searchParams.set(
-    "select",
-    [
-      "id",
-      "created_at",
-      "first_name",
-      "last_name",
-      "email",
-      "phone",
-      "source",
-      "message",
-      "status",
-      "updated_at",
-      "estimated_value",
-      "probability",
-      "expected_close_date",
-      "won_at",
-      "lost_at",
-      "lost_reason",
-    ].join(",")
-  );
+ leadsUrl.searchParams.set(
+  "select",
+  [
+    "id",
+    "created_at",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "source",
+    "message",
+    "status",
+    "updated_at",
+    "estimated_value",
+    "probability",
+    "expected_close_date",
+    "won_at",
+    "lost_at",
+    "lost_reason",
+    "pipeline:pipelines(name)",
+    "stage:pipeline_stages(name,position,stage_type)",
+  ].join(",")
+);
 
   leadsUrl.searchParams.set(
     "organization_id",
@@ -109,14 +111,16 @@ export default async function LeadsPage() {
 
       <table>
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Source</th>
-            <th>Status</th>
-            <th>Created</th>
-          </tr>
+         <tr>
+  <th>Name</th>
+  <th>Email</th>
+  <th>Phone</th>
+  <th>Source</th>
+  <th>Status</th>
+  <th>Pipeline</th>
+  <th>Stage</th>
+  <th>Created</th>
+</tr>
         </thead>
 
         <tbody>
@@ -130,14 +134,16 @@ export default async function LeadsPage() {
 
               <td>{lead.email || "—"}</td>
               <td>{lead.phone || "—"}</td>
-              <td>{lead.source || "—"}</td>
-              <td>{lead.status || "—"}</td>
+             <td>{lead.source || "—"}</td>
+<td>{lead.status || "—"}</td>
+<td>{lead.pipeline?.name || "—"}</td>
+<td>{lead.stage?.name || "—"}</td>
 
-              <td>
-                {lead.created_at
-                  ? new Date(lead.created_at).toLocaleString()
-                  : "—"}
-              </td>
+<td>
+  {lead.created_at
+    ? new Date(lead.created_at).toLocaleString()
+    : "—"}
+</td>
             </tr>
           ))}
         </tbody>
