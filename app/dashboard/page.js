@@ -47,11 +47,15 @@ export default async function DashboardPage() {
         Role: <strong>{auth.membership.role}</strong>
       </p>
 
-      <p>
-        Krovoro Core is connected and your tenant access is verified.
-      </p>
+     <p>
+  Krovoro Core is connected and your tenant access is verified.
+</p>
 
-      <LogoutButton />
+<p>
+  <a href="/leads">View Leads</a>
+</p>
+
+<LogoutButton />
     </main>
   );
 }
