@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import LogoutButton from "../../components/LogoutButton";
 import LeadStageSelect from "../../components/LeadStageSelect";
+import OpportunityEditForm from "../../components/OpportunityEditForm";
 import { getKrovoroAuthContext } from "../../../lib/krovoro-auth";
 
 export const dynamic = "force-dynamic";
@@ -210,32 +211,14 @@ export default async function LeadDetailPage({ params }) {
 
       <h2>Opportunity</h2>
 
-      <p>
-        Estimated value:{" "}
-        <strong>
-          {lead.estimated_value !== null
-            ? `$${Number(
-                lead.estimated_value
-              ).toLocaleString()}`
-            : "—"}
-        </strong>
-      </p>
+     <h2>Opportunity</h2>
 
-      <p>
-        Probability:{" "}
-        <strong>
-          {lead.probability !== null
-            ? `${lead.probability}%`
-            : "—"}
-        </strong>
-      </p>
-
-      <p>
-        Expected close date:{" "}
-        <strong>
-          {lead.expected_close_date || "—"}
-        </strong>
-      </p>
+<OpportunityEditForm
+  leadId={lead.id}
+  estimatedValue={lead.estimated_value}
+  probability={lead.probability}
+  expectedCloseDate={lead.expected_close_date}
+/>
 
       <h2>Lead Message</h2>
 
