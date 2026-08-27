@@ -27,8 +27,8 @@ export default async function DashboardPage() {
   });
 
   if (!userResponse.ok) {
-    redirect("/login");
-  }
+  redirect("/auth/refresh");
+}
 
   const user = await userResponse.json();
 
