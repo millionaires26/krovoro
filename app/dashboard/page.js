@@ -59,6 +59,10 @@ export default async function DashboardPage() {
   <a href="/contacts">View Contacts</a>
 </p>
 
+<p>
+  <a href="/pipelines">View Pipelines</a>
+</p>
+
 <LogoutButton />
     </main>
   );
