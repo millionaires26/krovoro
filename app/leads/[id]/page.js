@@ -4,8 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import LogoutButton from "../../components/LogoutButton";
 import LeadStageSelect from "../../components/LeadStageSelect";
 import OpportunityEditForm from "../../components/OpportunityEditForm";
+import LeadActivityTimeline from "../../components/LeadActivityTimeline";
 import { getKrovoroAuthContext } from "../../../lib/krovoro-auth";
-
 export const dynamic = "force-dynamic";
 
 export default async function LeadDetailPage({ params }) {
@@ -223,6 +223,7 @@ export default async function LeadDetailPage({ params }) {
       <h2>Lead Message</h2>
 
       <p>{lead.message || "No message provided."}</p>
+  <LeadActivityTimeline leadId={lead.id} />
 
       <h2>Record Information</h2>
 
