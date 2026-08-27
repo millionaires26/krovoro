@@ -189,11 +189,13 @@ export default async function LeadsPage() {
 
             return (
               <tr key={lead.id}>
-                <td>
-                  {[lead.first_name, lead.last_name]
-                    .filter(Boolean)
-                    .join(" ") || "—"}
-                </td>
+               <td>
+  <a href={`/leads/${lead.id}`}>
+    {[lead.first_name, lead.last_name]
+      .filter(Boolean)
+      .join(" ") || "—"}
+  </a>
+</td>
 
                 <td>{lead.email || "—"}</td>
                 <td>{lead.phone || "—"}</td>
