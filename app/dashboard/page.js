@@ -1,3 +1,4 @@
+import LogoutButton from "../components/LogoutButton";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -77,6 +78,7 @@ export default async function DashboardPage() {
       </p>
 
       <p>Krovoro Core is connected and your tenant access is verified.</p>
-    </main>
+  <LogoutButton />
+</main>
   );
 }
