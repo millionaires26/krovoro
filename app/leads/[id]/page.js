@@ -6,6 +6,7 @@ import LeadStageSelect from "../../components/LeadStageSelect";
 import OpportunityEditForm from "../../components/OpportunityEditForm";
 import LeadActivityTimeline from "../../components/LeadActivityTimeline";
 import LeadTasks from "../../components/LeadTasks";
+import LeadAssignmentSelect from "../../components/LeadAssignmentSelect";
 import { getKrovoroAuthContext } from "../../../lib/krovoro-auth";
 export const dynamic = "force-dynamic";
 
@@ -75,9 +76,10 @@ export default async function LeadDetailPage({ params }) {
       "expected_close_date",
       "won_at",
       "lost_at",
-      "lost_reason",
+            "lost_reason",
       "pipeline_id",
       "stage_id",
+      "assigned_to_user_id",
       "pipeline:pipelines!leads_pipeline_organization_fkey(name)",
       "stage:pipeline_stages!leads_stage_organization_fkey(name,position,stage_type)",
     ].join(",")
@@ -201,7 +203,7 @@ export default async function LeadDetailPage({ params }) {
         <strong>{lead.pipeline?.name || "—"}</strong>
       </p>
 
-      <div>
+           <div>
         <strong>Stage:</strong>{" "}
         <LeadStageSelect
           leadId={lead.id}
@@ -210,16 +212,21 @@ export default async function LeadDetailPage({ params }) {
         />
       </div>
 
+      <div>
+        <LeadAssignmentSelect
+          leadId={lead.id}
+          assignedToUserId={lead.assigned_to_user_id}
+        />
+      </div>
+
       <h2>Opportunity</h2>
 
-     <h2>Opportunity</h2>
-
-<OpportunityEditForm
-  leadId={lead.id}
-  estimatedValue={lead.estimated_value}
-  probability={lead.probability}
-  expectedCloseDate={lead.expected_close_date}
-/>
+      <OpportunityEditForm
+        leadId={lead.id}
+        estimatedValue={lead.estimated_value}
+        probability={lead.probability}
+        expectedCloseDate={lead.expected_close_date}
+      />
 
       <h2>Lead Message</h2>
 
