@@ -26,13 +26,16 @@ export async function GET() {
       );
     }
 
-    const supabaseUrl =
+       const supabaseUrl =
       process.env.KROVORO_SUPABASE_URL;
+
+    const anonKey =
+      process.env.KROVORO_SUPABASE_ANON_KEY;
 
     const serviceRoleKey =
       process.env.KROVORO_SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (!supabaseUrl || !anonKey || !serviceRoleKey) {
       return NextResponse.json(
         {
           success: false,
@@ -72,12 +75,12 @@ export async function GET() {
       "eq.active"
     );
 
-    const membersResponse = await fetch(
+          const membersResponse = await fetch(
       membersUrl.toString(),
       {
         headers: {
-          apikey: serviceRoleKey,
-          Authorization: `Bearer ${serviceRoleKey}`,
+          apikey: anonKey,
+          Authorization: `Bearer ${auth.accessToken}`,
         },
         cache: "no-store",
       }
