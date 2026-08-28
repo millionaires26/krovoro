@@ -1,12 +1,29 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { getKrovoroAuthContext } from "../../../../lib/krovoro-auth";
 
 export async function GET() {
   try {
-    const auth = await getKrovoroAuthContext();
+        const auth = await getKrovoroAuthContext();
 
     if (!auth.authenticated) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Authentication required.",
+        },
+        { status: 401 }
+      );
+    }
+
+    const cookieStore = await cookies();
+
+    const accessToken = cookieStore.get(
+      "krovoro_access_token"
+    )?.value;
+
+    if (!accessToken) {
       return NextResponse.json(
         {
           success: false,
@@ -80,7 +97,7 @@ export async function GET() {
       {
         headers: {
           apikey: anonKey,
-          Authorization: `Bearer ${auth.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         cache: "no-store",
       }
