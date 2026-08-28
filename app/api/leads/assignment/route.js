@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { getKrovoroAuthContext } from "../../../../lib/krovoro-auth";
 
@@ -26,6 +27,21 @@ export async function PATCH(request) {
       );
     }
 
+    const cookieStore = await cookies();
+
+const accessToken = cookieStore.get(
+  "krovoro_access_token"
+)?.value;
+
+if (!accessToken) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: "Authentication required.",
+    },
+    { status: 401 }
+  );
+}
     const body = await request.json();
 
     const leadId =
@@ -114,7 +130,7 @@ export async function PATCH(request) {
       {
         headers: {
           apikey: anonKey,
-          Authorization: `Bearer ${auth.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         cache: "no-store",
       }
@@ -264,7 +280,7 @@ export async function PATCH(request) {
         method: "PATCH",
         headers: {
           apikey: anonKey,
-          Authorization: `Bearer ${auth.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
           Prefer: "return=representation",
         },
