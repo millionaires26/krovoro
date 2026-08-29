@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { krovoroFetch } from "../../lib/krovoro-fetch";
+
 export default function LeadAssignmentSelect({
   leadId,
   assignedToUserId = null,
@@ -26,10 +28,10 @@ export default function LeadAssignmentSelect({
       setError("");
 
       try {
-        const response = await fetch("/api/team/members", {
-          method: "GET",
-          cache: "no-store",
-        });
+        const response = await krovoroFetch("/api/team/members", {
+  method: "GET",
+  cache: "no-store",
+});
 
         const data = await response.json();
 
@@ -79,19 +81,19 @@ export default function LeadAssignmentSelect({
     setError("");
 
     try {
-      const response = await fetch(
-        "/api/leads/assignment",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            leadId,
-            assignedToUserId: nextUserId,
-          }),
-        }
-      );
+      const response = await krovoroFetch(
+  "/api/leads/assignment",
+  {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      leadId,
+      assignedToUserId: nextUserId,
+    }),
+  }
+);
 
       const data = await response.json();
 
