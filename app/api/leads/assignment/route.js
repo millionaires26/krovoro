@@ -213,9 +213,9 @@ if (!accessToken) {
         membershipUrl.toString(),
         {
           headers: {
-            apikey: serviceRoleKey,
-            Authorization: `Bearer ${serviceRoleKey}`,
-          },
+  apikey: anonKey,
+  Authorization: `Bearer ${accessToken}`,
+},
           cache: "no-store",
         }
       );
