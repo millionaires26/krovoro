@@ -36,8 +36,8 @@ export default async function LeadsPage({ searchParams }) {
       ? requestedPage
       : 1;
 
-  const pageSize = 25;
-}
+    const pageSize = 25;
+
   const auth = await getKrovoroAuthContext();
 
   if (!auth.authenticated) {
