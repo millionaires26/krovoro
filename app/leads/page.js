@@ -7,7 +7,37 @@ import { getKrovoroAuthContext } from "../../lib/krovoro-auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function LeadsPage() {
+export default async function LeadsPage({ searchParams }) {
+  const params = await searchParams;
+
+  const search =
+    typeof params?.search === "string"
+      ? params.search.trim()
+      : "";
+
+  const status =
+    typeof params?.status === "string"
+      ? params.status.trim()
+      : "";
+
+  const sort =
+    typeof params?.sort === "string"
+      ? params.sort.trim()
+      : "created_desc";
+
+  const requestedPage = Number.parseInt(
+    params?.page || "1",
+    10
+  );
+
+  const page =
+    Number.isInteger(requestedPage) &&
+    requestedPage > 0
+      ? requestedPage
+      : 1;
+
+  const pageSize = 25;
+}
   const auth = await getKrovoroAuthContext();
 
   if (!auth.authenticated) {
