@@ -174,7 +174,16 @@ leadsUrl.searchParams.set(
     throw new Error("Unable to load Krovoro leads.");
   }
 
-  const leads = await leadsResponse.json();
+  const fetchedLeads = await leadsResponse.json();
+
+const hasNextPage =
+  fetchedLeads.length > pageSize;
+
+const leads = hasNextPage
+  ? fetchedLeads.slice(0, pageSize)
+  : fetchedLeads;
+
+const hasPreviousPage = page > 1;
 
   const stagesUrl = new URL(
     `${supabaseUrl}/rest/v1/pipeline_stages`
