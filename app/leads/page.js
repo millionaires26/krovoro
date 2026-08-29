@@ -115,17 +115,27 @@ export default async function LeadsPage({ searchParams }) {
   );
 
  if (search) {
-  const searchFilter = [
-    `first_name.ilike.*${search}*`,
-    `last_name.ilike.*${search}*`,
-    `email.ilike.*${search}*`,
-    `phone.ilike.*${search}*`,
-    `source.ilike.*${search}*`,
-  ].join(",");
+  const searchTerms = search
+    .split(/\s+/)
+    .map((term) => term.trim())
+    .filter(Boolean);
+
+  const searchGroups = searchTerms.map(
+    (term) =>
+      `or(` +
+      [
+        `first_name.ilike.*${term}*`,
+        `last_name.ilike.*${term}*`,
+        `email.ilike.*${term}*`,
+        `phone.ilike.*${term}*`,
+        `source.ilike.*${term}*`,
+      ].join(",") +
+      `)`
+  );
 
   leadsUrl.searchParams.set(
-    "or",
-    `(${searchFilter})`
+    "and",
+    `(${searchGroups.join(",")})`
   );
 }
 
