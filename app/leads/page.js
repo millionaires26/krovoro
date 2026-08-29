@@ -114,13 +114,51 @@ export default async function LeadsPage({ searchParams }) {
     `eq.${auth.organization.id}`
   );
 
+ if (search) {
   leadsUrl.searchParams.set(
-    "order",
-    "created_at.desc"
+    "or",
+    [
+      `first_name.ilike.*${search}*`,
+      `last_name.ilike.*${search}*`,
+      `email.ilike.*${search}*`,
+      `phone.ilike.*${search}*`,
+      `source.ilike.*${search}*`,
+    ].join(",")
   );
+}
 
-  leadsUrl.searchParams.set("limit", "100");
+if (status) {
+  leadsUrl.searchParams.set(
+    "status",
+    `eq.${status}`
+  );
+}
 
+const sortMap = {
+  created_desc: "created_at.desc",
+  created_asc: "created_at.asc",
+  name_asc: "first_name.asc",
+  name_desc: "first_name.desc",
+  value_desc: "estimated_value.desc.nullslast",
+  value_asc: "estimated_value.asc.nullslast",
+};
+
+leadsUrl.searchParams.set(
+  "order",
+  sortMap[sort] || sortMap.created_desc
+);
+
+const offset = (page - 1) * pageSize;
+
+leadsUrl.searchParams.set(
+  "limit",
+  String(pageSize + 1)
+);
+
+leadsUrl.searchParams.set(
+  "offset",
+  String(offset)
+);
   const leadsResponse = await fetch(
     leadsUrl.toString(),
     {
