@@ -170,9 +170,17 @@ leadsUrl.searchParams.set(
     }
   );
 
-  if (!leadsResponse.ok) {
-    throw new Error("Unable to load Krovoro leads.");
-  }
+ if (!leadsResponse.ok) {
+  const errorText = await leadsResponse.text();
+
+  console.error(
+    "Supabase leads read failed:",
+    leadsResponse.status,
+    errorText
+  );
+
+  throw new Error("Unable to load Krovoro leads.");
+}
 
   const fetchedLeads = await leadsResponse.json();
 
