@@ -284,13 +284,117 @@ function buildLeadsUrl(overrides = {}) {
         <strong>{auth.organization.name}</strong>
       </p>
 
-      <p>
-        Total leads: <strong>{leads.length}</strong>
-      </p>
+     <p>
+  Showing <strong>{leads.length}</strong> lead
+  {leads.length === 1 ? "" : "s"}
+  {page > 1 ? ` on page ${page}` : ""}
+</p>
 
-      <p>
-        <a href="/dashboard">Back to Dashboard</a>
-      </p>
+<form
+  method="GET"
+  action="/leads"
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "10px",
+    alignItems: "end",
+    marginBottom: "20px",
+  }}
+>
+  <div>
+    <label
+      htmlFor="lead-search"
+      style={{
+        display: "block",
+        marginBottom: "4px",
+      }}
+    >
+      Search
+    </label>
+
+    <input
+      id="lead-search"
+      name="search"
+      type="search"
+      defaultValue={search}
+      placeholder="Name, email, phone, source"
+    />
+  </div>
+
+  <div>
+    <label
+      htmlFor="lead-status"
+      style={{
+        display: "block",
+        marginBottom: "4px",
+      }}
+    >
+      Status
+    </label>
+
+    <select
+      id="lead-status"
+      name="status"
+      defaultValue={status}
+    >
+      <option value="">All statuses</option>
+      <option value="open">Open</option>
+      <option value="won">Won</option>
+      <option value="lost">Lost</option>
+    </select>
+  </div>
+
+  <div>
+    <label
+      htmlFor="lead-sort"
+      style={{
+        display: "block",
+        marginBottom: "4px",
+      }}
+    >
+      Sort
+    </label>
+
+    <select
+      id="lead-sort"
+      name="sort"
+      defaultValue={sort}
+    >
+      <option value="created_desc">
+        Newest first
+      </option>
+      <option value="created_asc">
+        Oldest first
+      </option>
+      <option value="name_asc">
+        Name A–Z
+      </option>
+      <option value="name_desc">
+        Name Z–A
+      </option>
+      <option value="value_desc">
+        Highest value
+      </option>
+      <option value="value_asc">
+        Lowest value
+      </option>
+    </select>
+  </div>
+
+  <button type="submit">
+    Apply
+  </button>
+
+  {(search || status || sort !== "created_desc") && (
+    <a href="/leads">
+      Clear
+    </a>
+  )}
+</form>
+
+<p>
+  <a href="/dashboard">Back to Dashboard</a>
+</p>
 
       <table>
         <thead>
