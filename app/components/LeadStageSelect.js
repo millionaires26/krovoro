@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { krovoroFetch } from "../../lib/krovoro-fetch";
+
 export default function LeadStageSelect({
   leadId,
   currentStageId,
@@ -30,7 +32,7 @@ export default function LeadStageSelect({
     setError("");
 
     try {
-      const response = await fetch("/api/leads/stage", {
+      const response = await krovoroFetch("/api/leads/stage", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
