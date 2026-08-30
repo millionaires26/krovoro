@@ -17,21 +17,90 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  if (!auth.authorized) {
-    return (
-      <main>
-        <h1>Access unavailable</h1>
+ if (!auth.authorized) {
+  return (
+    <main>
+      <h1>Access unavailable</h1>
 
-        <p>
-          Your account is not assigned to an active Krovoro organization.
-        </p>
+      <p>
+        Your account is not assigned to an active Krovoro organization.
+      </p>
 
-        <LogoutButton />
-      </main>
+      <LogoutButton />
+    </main>
+  );
+}
+
+const supabaseUrl = process.env.KROVORO_SUPABASE_URL;
+const anonKey = process.env.KROVORO_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !anonKey) {
+  throw new Error("Krovoro database configuration is missing.");
+}
+
+const cookieStore = await cookies();
+
+const accessToken = cookieStore.get(
+  "krovoro_access_token"
+)?.value;
+
+if (!accessToken) {
+  redirect("/login");
+}
+
+async function getTenantCount(table, filters = {}) {
+  const url = new URL(
+    `${supabaseUrl}/rest/v1/${table}`
+  );
+
+  url.searchParams.set("select", "id");
+  url.searchParams.set(
+    "organization_id",
+    `eq.${auth.organization.id}`
+  );
+
+  Object.entries(filters).forEach(
+    ([column, value]) => {
+      url.searchParams.set(
+        column,
+        `eq.${value}`
+      );
+    }
+  );
+
+  const response = await fetch(
+    url.toString(),
+    {
+      method: "HEAD",
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${accessToken}`,
+        Prefer: "count=exact",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Unable to load ${table} dashboard count.`
     );
   }
 
-  return (
+  const contentRange =
+    response.headers.get("content-range");
+
+  const total = contentRange
+    ? Number.parseInt(
+        contentRange.split("/")[1],
+        10
+      )
+    : 0;
+
+  return Number.isFinite(total) ? total : 0;
+}
+
+return (
     <main>
       <h1>Krovoro Dashboard</h1>
 
