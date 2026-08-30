@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
@@ -20,6 +21,34 @@ export default async function TeamPage() {
     auth,
     ["owner", "admin"]
   );
+
+  const cookieStore = await cookies();
+
+  const accessToken = cookieStore.get(
+    "krovoro_access_token"
+  )?.value;
+
+  const teamResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/team/members`,
+    {
+      headers: {
+        Cookie: `krovoro_access_token=${accessToken}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!teamResponse.ok) {
+    throw new Error(
+      "Unable to load organization team members."
+    );
+  }
+
+  const teamData = await teamResponse.json();
+
+  const members = Array.isArray(teamData.members)
+    ? teamData.members
+    : [];
 
   return (
     <main
@@ -48,6 +77,41 @@ export default async function TeamPage() {
           You can view your team, but only owners
           and administrators can manage members.
         </p>
+      )}
+
+      <h2>Team Members</h2>
+
+      {members.length === 0 ? (
+        <p>No team members found.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Account</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {members.map((member) => (
+              <tr key={member.userId}>
+                <td>
+                  {member.fullName ||
+                    "Unnamed member"}
+                </td>
+
+                <td>{member.role}</td>
+
+                <td>
+                  {member.isCurrentUser
+                    ? "You"
+                    : "Team member"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </main>
   );
