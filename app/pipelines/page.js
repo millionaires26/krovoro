@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import LogoutButton from "../components/LogoutButton";
-import LeadStageSelect from "../components/LeadStageSelect";
+import PipelineBoard from "../components/PipelineBoard";
 import { getKrovoroAuthContext } from "../../lib/krovoro-auth";
 
 export const dynamic = "force-dynamic";
