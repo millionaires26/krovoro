@@ -97,17 +97,17 @@ export default async function PipelinesPage() {
   );
 
   stagesUrl.searchParams.set(
-    "select",
-    [
-      "id",
-      "pipeline_id",
-      "name",
-      "position",
-      "stage_type",
-      "is_active",
-      "created_at",
-    ].join(",")
-  );
+  "select",
+  [
+    "id",
+    "pipeline_id",
+    "name",
+    "position",
+    "stage_type",
+    "is_active",
+    "created_at",
+  ].join(",")
+);
 
   stagesUrl.searchParams.set(
     "organization_id",
@@ -134,9 +134,69 @@ export default async function PipelinesPage() {
     throw new Error("Unable to load Krovoro pipeline stages.");
   }
 
-  const stages = await stagesResponse.json();
+ const stages = await stagesResponse.json();
 
-  const pipelineData = pipelines.map((pipeline) => ({
+const leadsUrl = new URL(
+  `${supabaseUrl}/rest/v1/leads`
+);
+
+leadsUrl.searchParams.set(
+  "select",
+  [
+    "id",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "source",
+    "status",
+    "pipeline_id",
+    "stage_id",
+    "estimated_value",
+    "probability",
+    "expected_close_date",
+    "assigned_to_user_id",
+    "created_at",
+    "updated_at",
+  ].join(",")
+);
+
+leadsUrl.searchParams.set(
+  "organization_id",
+  `eq.${auth.organization.id}`
+);
+
+leadsUrl.searchParams.set(
+  "order",
+  "created_at.asc"
+);
+
+const leadsResponse = await fetch(
+  leadsUrl.toString(),
+  {
+    headers: {
+      apikey: anonKey,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  }
+);
+
+if (!leadsResponse.ok) {
+  console.error(
+    "Supabase pipeline leads read failed:",
+    leadsResponse.status,
+    await leadsResponse.text()
+  );
+
+  throw new Error(
+    "Unable to load Krovoro pipeline leads."
+  );
+}
+
+const leads = await leadsResponse.json();
+
+const pipelineData = pipelines.map((pipeline) => ({
     ...pipeline,
     stages: stages.filter(
       (stage) => stage.pipeline_id === pipeline.id
