@@ -241,15 +241,87 @@ return (
         <strong>{auth.organization.name}</strong>
       </p>
 
-      <p>
-        Total contacts: <strong>{contacts.length}</strong>
-      </p>
+     <p>
+  Showing <strong>{contacts.length}</strong> contact
+  {contacts.length === 1 ? "" : "s"}
+  {page > 1 ? ` on page ${page}` : ""}
+</p>
 
-      <p>
-        <a href="/dashboard">Back to Dashboard</a>
-      </p>
+<form
+  action="/contacts"
+  method="GET"
+  style={{
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+    alignItems: "end",
+    marginBottom: "20px",
+  }}
+>
+  <label>
+    Search
+    <br />
+    <input
+      type="search"
+      name="search"
+      defaultValue={search}
+      placeholder="Name, email, phone, source"
+    />
+  </label>
 
-      <table>
+  <label>
+    Status
+    <br />
+    <select
+      name="status"
+      defaultValue={status}
+    >
+      <option value="">All statuses</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </label>
+
+  <label>
+    Sort
+    <br />
+    <select
+      name="sort"
+      defaultValue={sort}
+    >
+      <option value="created_desc">
+        Newest first
+      </option>
+      <option value="created_asc">
+        Oldest first
+      </option>
+      <option value="name_asc">
+        Name A–Z
+      </option>
+      <option value="name_desc">
+        Name Z–A
+      </option>
+    </select>
+  </label>
+
+  <button type="submit">
+    Apply
+  </button>
+
+  {(search ||
+    status ||
+    sort !== "created_desc") && (
+    <a href="/contacts">
+      Clear
+    </a>
+  )}
+</form>
+
+<p>
+  <a href="/dashboard">Back to Dashboard</a>
+</p>
+
+<table>
         <thead>
           <tr>
             <th>Name</th>
