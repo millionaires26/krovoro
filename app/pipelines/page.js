@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import LogoutButton from "../components/LogoutButton";
+import LeadStageSelect from "../components/LeadStageSelect";
 import { getKrovoroAuthContext } from "../../lib/krovoro-auth";
 
 export const dynamic = "force-dynamic";
@@ -314,10 +315,16 @@ const pipelineData = pipelines.map((pipeline) => ({
                   )}
 
                   {lead.probability !== null && (
-                    <p>
-                      Probability: {lead.probability}%
-                    </p>
-                  )}
+  <p>
+    Probability: {lead.probability}%
+  </p>
+)}
+
+<LeadStageSelect
+  leadId={lead.id}
+  currentStageId={lead.stage_id}
+  stages={pipeline.stages}
+/>
                 </article>
               ))
             )}
