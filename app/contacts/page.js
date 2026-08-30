@@ -101,12 +101,61 @@ export default async function ContactsPage({ searchParams }) {
     `eq.${auth.organization.id}`
   );
 
-  contactsUrl.searchParams.set(
-    "order",
-    "created_at.desc"
+if (search) {
+  const searchTerms = search
+    .split(/\s+/)
+    .map((term) => term.trim())
+    .filter(Boolean);
+
+  const searchGroups = searchTerms.map(
+    (term) =>
+      `or(` +
+      [
+        `first_name.ilike.*${term}*`,
+        `last_name.ilike.*${term}*`,
+        `email.ilike.*${term}*`,
+        `phone.ilike.*${term}*`,
+        `source.ilike.*${term}*`,
+      ].join(",") +
+      `)`
   );
 
-  contactsUrl.searchParams.set("limit", "100");
+  contactsUrl.searchParams.set(
+    "and",
+    `(${searchGroups.join(",")})`
+  );
+}
+
+if (status) {
+  contactsUrl.searchParams.set(
+    "status",
+    `eq.${status}`
+  );
+}
+
+const sortMap = {
+  created_desc: "created_at.desc",
+  created_asc: "created_at.asc",
+  name_asc: "first_name.asc",
+  name_desc: "first_name.desc",
+};
+
+contactsUrl.searchParams.set(
+  "order",
+  sortMap[sort] || sortMap.created_desc
+);
+
+const offset = (page - 1) * pageSize;
+
+contactsUrl.searchParams.set(
+  "limit",
+  String(pageSize + 1)
+);
+
+contactsUrl.searchParams.set(
+  "offset",
+  String(offset)
+);
 
   const response = await fetch(
     contactsUrl.toString(),
