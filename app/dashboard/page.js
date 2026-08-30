@@ -131,9 +131,47 @@ return (
         Role: <strong>{auth.membership.role}</strong>
       </p>
 
-     <p>
+   <p>
   Krovoro Core is connected and your tenant access is verified.
 </p>
+
+<section>
+  <h2>CRM Overview</h2>
+
+  <div
+    style={{
+      display: "flex",
+      gap: "16px",
+      flexWrap: "wrap",
+      marginBottom: "24px",
+    }}
+  >
+    <div>
+      <strong>Total Leads</strong>
+      <p>{totalLeads}</p>
+    </div>
+
+    <div>
+      <strong>Open Leads</strong>
+      <p>{openLeads}</p>
+    </div>
+
+    <div>
+      <strong>Won Leads</strong>
+      <p>{wonLeads}</p>
+    </div>
+
+    <div>
+      <strong>Lost Leads</strong>
+      <p>{lostLeads}</p>
+    </div>
+
+    <div>
+      <strong>Total Contacts</strong>
+      <p>{totalContacts}</p>
+    </div>
+  </div>
+</section>
 
 <p>
   <a href="/leads">View Leads</a>
