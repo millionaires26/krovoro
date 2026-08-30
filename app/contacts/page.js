@@ -35,7 +35,7 @@ export default async function ContactsPage({ searchParams }) {
       ? requestedPage
       : 1;
 
-  const pageSize = 25;
+  const pageSize = 5;
   const auth = await getKrovoroAuthContext();
 
   if (!auth.authenticated) {
