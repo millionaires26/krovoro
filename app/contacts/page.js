@@ -359,9 +359,42 @@ return (
             </tr>
           ))}
         </tbody>
-      </table>
+   </table>
 
-      <LogoutButton />
+{(hasPreviousPage || hasNextPage) && (
+  <nav
+    aria-label="Contact pagination"
+    style={{
+      display: "flex",
+      gap: "12px",
+      alignItems: "center",
+      marginTop: "20px",
+      marginBottom: "20px",
+    }}
+  >
+    {hasPreviousPage ? (
+      <a href={buildContactsUrl({ page: page - 1 })}>
+        Previous
+      </a>
+    ) : (
+      <span>Previous</span>
+    )}
+
+    <span>
+      Page <strong>{page}</strong>
+    </span>
+
+    {hasNextPage ? (
+      <a href={buildContactsUrl({ page: page + 1 })}>
+        Next
+      </a>
+    ) : (
+      <span>Next</span>
+    )}
+  </nav>
+)}
+
+<LogoutButton />
     </main>
   );
 }
