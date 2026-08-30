@@ -229,53 +229,104 @@ const pipelineData = pipelines.map((pipeline) => ({
         <a href="/dashboard">Back to Dashboard</a>
       </p>
 
-      {pipelineData.length === 0 ? (
-        <p>No pipelines are configured.</p>
-      ) : (
-        pipelineData.map((pipeline) => (
-          <section key={pipeline.id}>
-            <h2>{pipeline.name}</h2>
+     {pipelineData.length === 0 ? (
+  <p>No pipelines are configured.</p>
+) : (
+  pipelineData.map((pipeline) => (
+    <section key={pipeline.id}>
+      <h2>{pipeline.name}</h2>
 
-            {pipeline.description && (
-              <p>{pipeline.description}</p>
-            )}
-
-            <p>
-              Default:{" "}
-              <strong>{pipeline.is_default ? "Yes" : "No"}</strong>
-              {" | "}
-              Status:{" "}
-              <strong>
-                {pipeline.is_active ? "Active" : "Inactive"}
-              </strong>
-            </p>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Position</th>
-                  <th>Stage</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {pipeline.stages.map((stage) => (
-                  <tr key={stage.id}>
-                    <td>{stage.position}</td>
-                    <td>{stage.name}</td>
-                    <td>{stage.stage_type || "—"}</td>
-                    <td>
-                      {stage.is_active ? "Active" : "Inactive"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
-        ))
+      {pipeline.description && (
+        <p>{pipeline.description}</p>
       )}
+
+      <p>
+        Default:{" "}
+        <strong>{pipeline.is_default ? "Yes" : "No"}</strong>
+        {" | "}
+        Status:{" "}
+        <strong>
+          {pipeline.is_active ? "Active" : "Inactive"}
+        </strong>
+      </p>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "16px",
+          alignItems: "flex-start",
+          overflowX: "auto",
+          paddingBottom: "16px",
+        }}
+      >
+        {pipeline.stages.map((stage) => (
+          <section
+            key={stage.id}
+            style={{
+              minWidth: "280px",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "12px",
+            }}
+          >
+            <h3>
+              {stage.name} ({stage.leads.length})
+            </h3>
+
+            {stage.leads.length === 0 ? (
+              <p>No leads</p>
+            ) : (
+              stage.leads.map((lead) => (
+                <article
+                  key={lead.id}
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "6px",
+                    padding: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <p>
+                    <strong>
+                      <a href={`/leads/${lead.id}`}>
+                        {[lead.first_name, lead.last_name]
+                          .filter(Boolean)
+                          .join(" ") || "Unnamed lead"}
+                      </a>
+                    </strong>
+                  </p>
+
+                  {lead.email && <p>{lead.email}</p>}
+
+                  {lead.phone && <p>{lead.phone}</p>}
+
+                  {lead.source && (
+                    <p>Source: {lead.source}</p>
+                  )}
+
+                  {lead.estimated_value !== null && (
+                    <p>
+                      Value: $
+                      {Number(
+                        lead.estimated_value
+                      ).toLocaleString()}
+                    </p>
+                  )}
+
+                  {lead.probability !== null && (
+                    <p>
+                      Probability: {lead.probability}%
+                    </p>
+                  )}
+                </article>
+              ))
+            )}
+          </section>
+        ))}
+      </div>
+    </section>
+  ))
+)}
 
       <LogoutButton />
     </main>
