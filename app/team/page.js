@@ -1,4 +1,7 @@
-import { cookies } from "next/headers";
+import {
+  cookies,
+  headers,
+} from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
@@ -28,15 +31,29 @@ export default async function TeamPage() {
     "krovoro_access_token"
   )?.value;
 
-  const teamResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL || ""}/api/team/members`,
-    {
-      headers: {
-        Cookie: `krovoro_access_token=${accessToken}`,
-      },
-      cache: "no-store",
-    }
+ const requestHeaders = await headers();
+
+const host = requestHeaders.get("host");
+
+const protocol =
+  requestHeaders.get("x-forwarded-proto") ||
+  "https";
+
+if (!host) {
+  throw new Error(
+    "Unable to determine Krovoro application host."
   );
+}
+
+const teamResponse = await fetch(
+  `${protocol}://${host}/api/team/members`,
+  {
+    headers: {
+      Cookie: `krovoro_access_token=${accessToken}`,
+    },
+    cache: "no-store",
+  }
+);
 
   if (!teamResponse.ok) {
     throw new Error(
