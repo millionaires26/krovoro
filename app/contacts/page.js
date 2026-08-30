@@ -129,10 +129,12 @@ export default async function ContactsPage() {
           {contacts.map((contact) => (
             <tr key={contact.id}>
               <td>
-                {[contact.first_name, contact.last_name]
-                  .filter(Boolean)
-                  .join(" ") || "—"}
-              </td>
+  <a href={`/contacts/${contact.id}`}>
+    {[contact.first_name, contact.last_name]
+      .filter(Boolean)
+      .join(" ") || "—"}
+  </a>
+</td>
 
               <td>{contact.email || "—"}</td>
               <td>{contact.phone || "—"}</td>
