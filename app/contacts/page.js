@@ -183,6 +183,55 @@ const contacts = hasNextPage
 
 const hasPreviousPage = page > 1;
 
+function buildContactsUrl(overrides = {}) {
+  const nextSearch =
+    overrides.search !== undefined
+      ? overrides.search
+      : search;
+
+  const nextStatus =
+    overrides.status !== undefined
+      ? overrides.status
+      : status;
+
+  const nextSort =
+    overrides.sort !== undefined
+      ? overrides.sort
+      : sort;
+
+  const nextPage =
+    overrides.page !== undefined
+      ? overrides.page
+      : page;
+
+  const query = new URLSearchParams();
+
+  if (nextSearch) {
+    query.set("search", nextSearch);
+  }
+
+  if (nextStatus) {
+    query.set("status", nextStatus);
+  }
+
+  if (
+    nextSort &&
+    nextSort !== "created_desc"
+  ) {
+    query.set("sort", nextSort);
+  }
+
+  if (nextPage > 1) {
+    query.set("page", String(nextPage));
+  }
+
+  const queryString = query.toString();
+
+  return queryString
+    ? `/contacts?${queryString}`
+    : "/contacts";
+}
+
 return (
     <main>
       <h1>Contacts</h1>
