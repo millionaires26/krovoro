@@ -197,11 +197,20 @@ if (!leadsResponse.ok) {
 const leads = await leadsResponse.json();
 
 const pipelineData = pipelines.map((pipeline) => ({
-    ...pipeline,
-    stages: stages.filter(
+  ...pipeline,
+  stages: stages
+    .filter(
       (stage) => stage.pipeline_id === pipeline.id
-    ),
-  }));
+    )
+    .map((stage) => ({
+      ...stage,
+      leads: leads.filter(
+        (lead) =>
+          lead.pipeline_id === pipeline.id &&
+          lead.stage_id === stage.id
+      ),
+    })),
+}));
 
   return (
     <main>
