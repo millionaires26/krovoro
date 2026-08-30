@@ -100,6 +100,20 @@ async function getTenantCount(table, filters = {}) {
   return Number.isFinite(total) ? total : 0;
 }
 
+const [
+  totalLeads,
+  openLeads,
+  wonLeads,
+  lostLeads,
+  totalContacts,
+] = await Promise.all([
+  getTenantCount("leads"),
+  getTenantCount("leads", { status: "open" }),
+  getTenantCount("leads", { status: "won" }),
+  getTenantCount("leads", { status: "lost" }),
+  getTenantCount("contacts"),
+]);
+
 return (
     <main>
       <h1>Krovoro Dashboard</h1>
