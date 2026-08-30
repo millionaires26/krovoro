@@ -172,9 +172,18 @@ contactsUrl.searchParams.set(
     throw new Error("Unable to load Krovoro contacts.");
   }
 
-  const contacts = await response.json();
+  const fetchedContacts = await response.json();
 
-  return (
+const hasNextPage =
+  fetchedContacts.length > pageSize;
+
+const contacts = hasNextPage
+  ? fetchedContacts.slice(0, pageSize)
+  : fetchedContacts;
+
+const hasPreviousPage = page > 1;
+
+return (
     <main>
       <h1>Contacts</h1>
 
