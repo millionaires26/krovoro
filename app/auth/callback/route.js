@@ -1,7 +1,37 @@
 import { NextResponse } from "next/server";
 
+function getPublicOrigin(request) {
+  const forwardedHost =
+    request.headers.get("x-forwarded-host");
+
+  const host =
+    forwardedHost ||
+    request.headers.get("host");
+
+  const forwardedProto =
+    request.headers.get("x-forwarded-proto");
+
+  const protocol =
+    forwardedProto || "https";
+
+  if (!host) {
+    return null;
+  }
+
+  return `${protocol}://${host}`;
+}
+
 export async function GET(request) {
   const requestUrl = new URL(request.url);
+
+  const publicOrigin = getPublicOrigin(request);
+
+  if (!publicOrigin) {
+    return new NextResponse(
+      "Unable to determine application host.",
+      { status: 500 }
+    );
+  }
 
   const tokenHash =
     requestUrl.searchParams.get("token_hash");
@@ -15,7 +45,7 @@ export async function GET(request) {
 
   if (!tokenHash || !type) {
     return NextResponse.redirect(
-      new URL("/login", requestUrl.origin)
+      new URL("/login", publicOrigin)
     );
   }
 
@@ -27,7 +57,7 @@ export async function GET(request) {
 
   if (!supabaseUrl || !anonKey) {
     return NextResponse.redirect(
-      new URL("/login", requestUrl.origin)
+      new URL("/login", publicOrigin)
     );
   }
 
@@ -50,7 +80,7 @@ export async function GET(request) {
 
     if (!verifyResponse.ok) {
       return NextResponse.redirect(
-        new URL("/login", requestUrl.origin)
+        new URL("/login", publicOrigin)
       );
     }
 
@@ -61,7 +91,7 @@ export async function GET(request) {
       !session.refresh_token
     ) {
       return NextResponse.redirect(
-        new URL("/login", requestUrl.origin)
+        new URL("/login", publicOrigin)
       );
     }
 
@@ -72,7 +102,7 @@ export async function GET(request) {
         : "/dashboard";
 
     const response = NextResponse.redirect(
-      new URL(safeNext, requestUrl.origin)
+      new URL(safeNext, publicOrigin)
     );
 
     response.cookies.set(
@@ -104,7 +134,7 @@ export async function GET(request) {
     return response;
   } catch {
     return NextResponse.redirect(
-      new URL("/login", requestUrl.origin)
+      new URL("/login", publicOrigin)
     );
   }
 }
