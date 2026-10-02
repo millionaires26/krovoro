@@ -165,7 +165,40 @@ async function createInvitedMembership({
     );
   }
 
-  return membership;
+    return membership;
+}
+
+async function deleteInvitedMembership({
+  supabaseUrl,
+  serviceRoleKey,
+  membershipId,
+}) {
+  const membershipUrl = new URL(
+    `${supabaseUrl}/rest/v1/organization_members`
+  );
+
+  membershipUrl.searchParams.set(
+    "id",
+    `eq.${membershipId}`
+  );
+
+  const response = await fetch(
+    membershipUrl.toString(),
+    {
+      method: "DELETE",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Unable to remove incomplete invited membership."
+    );
+  }
 }
 
 export async function POST(request) {
