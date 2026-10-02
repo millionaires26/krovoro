@@ -157,6 +157,65 @@ export async function POST(request) {
       );
     }
 
+       const membershipUrl = new URL(
+      `${supabaseUrl}/rest/v1/organization_members`
+    );
+
+    membershipUrl.searchParams.set(
+      "user_id",
+      `eq.${user.id}`
+    );
+
+    membershipUrl.searchParams.set(
+      "status",
+      "eq.invited"
+    );
+
+    const membershipResponse = await fetch(
+      membershipUrl.toString(),
+      {
+        method: "PATCH",
+        headers: {
+          apikey: serviceRoleKey,
+          Authorization: `Bearer ${serviceRoleKey}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify({
+          status: "active",
+        }),
+        cache: "no-store",
+      }
+    );
+
+    if (!membershipResponse.ok) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Your password was set, but Krovoro could not activate your organization membership.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const memberships =
+      await membershipResponse.json();
+
+    if (
+      !Array.isArray(memberships) ||
+      memberships.length !== 1
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Unable to activate the invited organization membership.",
+        },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
     });
