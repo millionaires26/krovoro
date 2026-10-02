@@ -144,11 +144,36 @@ export async function POST(request) {
 
   if (!allowedRoles.includes(role)) {
     return NextResponse.json(
+      { success: false, message: "Invalid team member role." },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const existingUser = await findAuthUserByEmail({
+      supabaseUrl,
+      serviceRoleKey,
+      email,
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "A Krovoro account already exists for this email. Existing-user invitations are not supported yet.",
+        },
+        { status: 409 }
+      );
+    }
+  } catch {
+    return NextResponse.json(
       {
         success: false,
-        message: "Invalid team member role.",
+        message:
+          "Unable to verify whether this email already has a Krovoro account.",
       },
-      { status: 400 }
+      { status: 500 }
     );
   }
 
