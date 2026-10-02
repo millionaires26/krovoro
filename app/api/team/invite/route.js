@@ -40,13 +40,37 @@ async function findAuthUserByEmail({
     ? data.users
     : [];
 
-  return (
+   return (
     users.find(
       (user) =>
         typeof user?.email === "string" &&
         user.email.toLowerCase() === email
     ) || null
   );
+}
+
+async function deleteAuthUser({
+  supabaseUrl,
+  serviceRoleKey,
+  userId,
+}) {
+  const response = await fetch(
+    `${supabaseUrl}/auth/v1/admin/users/${userId}`,
+    {
+      method: "DELETE",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Unable to remove incomplete authentication user."
+    );
+  }
 }
 
 export async function POST(request) {
