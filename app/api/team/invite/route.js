@@ -66,11 +66,59 @@ async function deleteAuthUser({
     }
   );
 
-  if (!response.ok) {
+   if (!response.ok) {
     throw new Error(
       "Unable to remove incomplete authentication user."
     );
   }
+}
+
+async function generateTeamInvite({
+  supabaseUrl,
+  serviceRoleKey,
+  email,
+}) {
+  const response = await fetch(
+    `${supabaseUrl}/auth/v1/admin/generate_link`,
+    {
+      method: "POST",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: "invite",
+        email,
+        options: {
+          redirectTo:
+            "https://krovoro.com/auth/callback",
+        },
+      }),
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Unable to create authentication invitation."
+    );
+  }
+
+  const data = await response.json();
+
+  const user = data?.user || null;
+
+  if (!user?.id) {
+    throw new Error(
+      "Authentication invitation did not return a user."
+    );
+  }
+
+  return {
+    user,
+    properties: data?.properties || null,
+  };
 }
 
 export async function POST(request) {
