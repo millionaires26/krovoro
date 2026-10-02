@@ -115,10 +115,57 @@ async function generateTeamInvite({
     );
   }
 
-  return {
+   return {
     user,
     properties: data?.properties || null,
   };
+}
+
+async function createInvitedMembership({
+  supabaseUrl,
+  serviceRoleKey,
+  organizationId,
+  userId,
+  role,
+}) {
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/organization_members`,
+    {
+      method: "POST",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify({
+        organization_id: organizationId,
+        user_id: userId,
+        role,
+        status: "invited",
+      }),
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Unable to create invited organization membership."
+    );
+  }
+
+  const data = await response.json();
+  const membership = Array.isArray(data)
+    ? data[0]
+    : data;
+
+  if (!membership?.id) {
+    throw new Error(
+      "Invited organization membership was not returned."
+    );
+  }
+
+  return membership;
 }
 
 export async function POST(request) {
