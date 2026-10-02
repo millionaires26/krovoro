@@ -299,7 +299,7 @@ export async function POST(request) {
     );
   }
 
-  try {
+    try {
     const existingUser = await findAuthUserByEmail({
       supabaseUrl,
       serviceRoleKey,
@@ -327,11 +327,66 @@ export async function POST(request) {
     );
   }
 
+  let invitedUser = null;
+  let invitedMembership = null;
+
+  try {
+    const invitation = await generateTeamInvite({
+      supabaseUrl,
+      serviceRoleKey,
+      email,
+    });
+
+    invitedUser = invitation.user;
+
+    invitedMembership =
+      await createInvitedMembership({
+        supabaseUrl,
+        serviceRoleKey,
+        organizationId: auth.organization.id,
+        userId: invitedUser.id,
+        role,
+      });
+  } catch {
+    if (invitedMembership?.id) {
+      try {
+        await deleteInvitedMembership({
+          supabaseUrl,
+          serviceRoleKey,
+          membershipId: invitedMembership.id,
+        });
+      } catch {
+        // Preserve the original invitation failure.
+      }
+    }
+
+    if (invitedUser?.id) {
+      try {
+        await deleteAuthUser({
+          supabaseUrl,
+          serviceRoleKey,
+          userId: invitedUser.id,
+        });
+      } catch {
+        // Preserve the original invitation failure.
+      }
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Unable to prepare the team invitation.",
+      },
+      { status: 500 }
+    );
+  }
+
   return NextResponse.json(
     {
       success: false,
       message:
-        "Team invitation creation is not enabled yet.",
+        "Team invitation email delivery is not enabled yet.",
     },
     { status: 501 }
   );
