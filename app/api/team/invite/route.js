@@ -87,14 +87,12 @@ async function generateTeamInvite({
         Authorization: `Bearer ${serviceRoleKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        type: "invite",
-        email,
-        options: {
-          redirectTo:
-            "https://krovoro.com/auth/callback",
-        },
-      }),
+     body: JSON.stringify({
+  type: "invite",
+  email,
+  redirect_to:
+    "https://krovoro.com/auth/callback",
+}),
       cache: "no-store",
     }
   );
