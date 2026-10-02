@@ -95,15 +95,19 @@ export async function GET(request) {
       );
     }
 
-    const safeNext =
-      next.startsWith("/") &&
-      !next.startsWith("//")
-        ? next
-        : "/dashboard";
+      const safeNext =
+    next.startsWith("/") && !next.startsWith("//")
+      ? next
+      : "/dashboard";
 
-    const response = NextResponse.redirect(
-      new URL(safeNext, publicOrigin)
-    );
+  const destination =
+    type === "invite"
+      ? "/auth/set-password"
+      : safeNext;
+
+  const response = NextResponse.redirect(
+    new URL(destination, publicOrigin)
+  );
 
     response.cookies.set(
       "krovoro_access_token",
