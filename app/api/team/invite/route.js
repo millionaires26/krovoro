@@ -5,6 +5,50 @@ import {
   hasKrovoroRole,
 } from "../../../../lib/krovoro-auth";
 
+async function findAuthUserByEmail({
+  supabaseUrl,
+  serviceRoleKey,
+  email,
+}) {
+  const usersUrl = new URL(
+    `${supabaseUrl}/auth/v1/admin/users`
+  );
+
+  usersUrl.searchParams.set("page", "1");
+  usersUrl.searchParams.set("per_page", "1000");
+
+  const response = await fetch(
+    usersUrl.toString(),
+    {
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Unable to inspect existing authentication users."
+    );
+  }
+
+  const data = await response.json();
+
+  const users = Array.isArray(data?.users)
+    ? data.users
+    : [];
+
+  return (
+    users.find(
+      (user) =>
+        typeof user?.email === "string" &&
+        user.email.toLowerCase() === email
+    ) || null
+  );
+}
+
 export async function POST(request) {
   const auth = await getKrovoroAuthContext();
 
