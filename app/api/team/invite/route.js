@@ -327,8 +327,9 @@ export async function POST(request) {
     );
   }
 
-  let invitedUser = null;
+    let invitedUser = null;
   let invitedMembership = null;
+  let invitationProperties = null;
 
   try {
     const invitation = await generateTeamInvite({
@@ -338,7 +339,8 @@ export async function POST(request) {
     });
 
     invitedUser = invitation.user;
-
+    invitationProperties =
+      invitation.properties;
     invitedMembership =
       await createInvitedMembership({
         supabaseUrl,
