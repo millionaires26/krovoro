@@ -67,7 +67,7 @@ export async function POST(request) {
   }
 
   try {
-    const userResponse = await fetch(
+        const userResponse = await fetch(
       `${supabaseUrl}/auth/v1/user`,
       {
         headers: {
@@ -84,6 +84,19 @@ export async function POST(request) {
           success: false,
           message:
             "Your invitation session has expired. Please request a new invitation.",
+        },
+        { status: 401 }
+      );
+    }
+
+    const user = await userResponse.json();
+
+    if (!user?.id) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Unable to verify the invited account.",
         },
         { status: 401 }
       );
