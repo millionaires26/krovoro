@@ -49,13 +49,20 @@ export async function POST(request) {
     );
   }
 
-  const supabaseUrl =
+   const supabaseUrl =
     process.env.KROVORO_SUPABASE_URL;
 
   const anonKey =
     process.env.KROVORO_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !anonKey) {
+  const serviceRoleKey =
+    process.env.KROVORO_SUPABASE_SERVICE_ROLE_KEY;
+
+  if (
+    !supabaseUrl ||
+    !anonKey ||
+    !serviceRoleKey
+  ) {
     return NextResponse.json(
       {
         success: false,
