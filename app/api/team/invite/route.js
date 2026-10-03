@@ -349,9 +349,19 @@ export async function POST(request) {
       email,
     });
 
-    invitedUser = invitation.user;
+        invitedUser = invitation.user;
     invitationProperties =
       invitation.properties;
+
+    if (
+      invitationProperties.verification_type !==
+      "invite"
+    ) {
+      throw new Error(
+        "Authentication invitation returned an unexpected verification type."
+      );
+    }
+
     invitedMembership =
       await createInvitedMembership({
         supabaseUrl,
