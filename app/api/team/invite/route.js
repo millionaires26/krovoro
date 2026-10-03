@@ -466,7 +466,7 @@ export async function POST(request) {
     );
   }
 
-    try {
+     try {
     await sendTeamInvitationEmail({
       email,
       organizationName:
@@ -474,36 +474,11 @@ export async function POST(request) {
       invitationUrl,
     });
   } catch {
-    if (invitedMembership?.id) {
-      try {
-        await deleteInvitedMembership({
-          supabaseUrl,
-          serviceRoleKey,
-          membershipId:
-            invitedMembership.id,
-        });
-      } catch {
-        // Preserve the original email delivery failure.
-      }
-    }
-
-    if (invitedUser?.id) {
-      try {
-        await deleteAuthUser({
-          supabaseUrl,
-          serviceRoleKey,
-          userId: invitedUser.id,
-        });
-      } catch {
-        // Preserve the original email delivery failure.
-      }
-    }
-
     return NextResponse.json(
       {
         success: false,
         message:
-          "Unable to deliver the team invitation.",
+          "The invitation was created, but Krovoro could not confirm email delivery. The invitation remains pending.",
       },
       { status: 502 }
     );
