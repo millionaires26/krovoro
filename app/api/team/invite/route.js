@@ -338,9 +338,10 @@ export async function POST(request) {
     );
   }
 
-    let invitedUser = null;
+     let invitedUser = null;
   let invitedMembership = null;
   let invitationProperties = null;
+  let invitationUrl = null;
 
   try {
     const invitation = await generateTeamInvite({
@@ -353,7 +354,7 @@ export async function POST(request) {
     invitationProperties =
       invitation.properties;
 
-    if (
+        if (
       invitationProperties.verification_type !==
       "invite"
     ) {
@@ -361,6 +362,22 @@ export async function POST(request) {
         "Authentication invitation returned an unexpected verification type."
       );
     }
+
+    const invitationUrlObject = new URL(
+      "https://krovoro.com/auth/callback"
+    );
+
+    invitationUrlObject.searchParams.set(
+      "token_hash",
+      invitationProperties.hashed_token
+    );
+
+    invitationUrlObject.searchParams.set(
+      "type",
+      "invite"
+    );
+
+    invitationUrl = invitationUrlObject.toString();
 
     invitedMembership =
       await createInvitedMembership({
