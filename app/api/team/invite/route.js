@@ -214,22 +214,37 @@ async function deleteInvitedMembership({
   }
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 async function sendTeamInvitationEmail({
   email,
   organizationName,
   invitationUrl,
 }) {
-  const safeOrganizationName =
+    const organizationDisplayName =
     typeof organizationName === "string" &&
     organizationName.trim()
       ? organizationName.trim()
       : "your organization";
 
+  const safeOrganizationName =
+    escapeHtml(organizationDisplayName);
+
+  const safeInvitationUrl =
+    escapeHtml(invitationUrl);
+
   await sendKrovoroEmail({
     to: email,
     subject: `You're invited to join ${safeOrganizationName} on Krovoro`,
     text:
-      `You've been invited to join ${safeOrganizationName} on Krovoro.\n\n` +
+           `You've been invited to join ${organizationDisplayName} on Krovoro.\n\n` +
       `Accept your invitation and create your password:\n${invitationUrl}\n\n` +
       "If you were not expecting this invitation, you can ignore this email.",
     html:
