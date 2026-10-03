@@ -5,6 +5,10 @@ import {
   hasKrovoroRole,
 } from "../../../../lib/krovoro-auth";
 
+import {
+  sendKrovoroEmail,
+} from "../../../../lib/krovoro-email";
+
 async function findAuthUserByEmail({
   supabaseUrl,
   serviceRoleKey,
