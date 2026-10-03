@@ -214,6 +214,31 @@ async function deleteInvitedMembership({
   }
 }
 
+async function sendTeamInvitationEmail({
+  email,
+  organizationName,
+  invitationUrl,
+}) {
+  const safeOrganizationName =
+    typeof organizationName === "string" &&
+    organizationName.trim()
+      ? organizationName.trim()
+      : "your organization";
+
+  await sendKrovoroEmail({
+    to: email,
+    subject: `You're invited to join ${safeOrganizationName} on Krovoro`,
+    text:
+      `You've been invited to join ${safeOrganizationName} on Krovoro.\n\n` +
+      `Accept your invitation and create your password:\n${invitationUrl}\n\n` +
+      "If you were not expecting this invitation, you can ignore this email.",
+    html:
+      `<p>You've been invited to join <strong>${safeOrganizationName}</strong> on Krovoro.</p>` +
+      `<p><a href="${invitationUrl}">Accept invitation and create password</a></p>` +
+      "<p>If you were not expecting this invitation, you can ignore this email.</p>",
+  });
+}
+
 export async function POST(request) {
   const auth = await getKrovoroAuthContext();
 
