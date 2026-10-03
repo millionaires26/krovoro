@@ -9,6 +9,8 @@ import {
   hasKrovoroRole,
 } from "../../lib/krovoro-auth";
 
+import InviteMemberForm from "./InviteMemberForm";
+
 export default async function TeamPage() {
   const auth = await getKrovoroAuthContext();
 
@@ -89,12 +91,14 @@ const teamResponse = await fetch(
         <strong>{auth.membership?.role}</strong>
       </p>
 
-      {!canManageTeam && (
+           {!canManageTeam && (
         <p>
           You can view your team, but only owners
           and administrators can manage members.
         </p>
       )}
+
+      {canManageTeam && <InviteMemberForm />}
 
       <h2>Team Members</h2>
 
