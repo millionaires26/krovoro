@@ -103,9 +103,10 @@ async function generateTeamInvite({
     );
   }
 
-  const data = await response.json();
+   const data = await response.json();
 
   const user = data?.user || null;
+  const properties = data?.properties || null;
 
   if (!user?.id) {
     throw new Error(
@@ -113,9 +114,19 @@ async function generateTeamInvite({
     );
   }
 
-   return {
+  if (
+    !properties ||
+    typeof properties.hashed_token !== "string" ||
+    !properties.hashed_token
+  ) {
+    throw new Error(
+      "Authentication invitation did not return a hashed token."
+    );
+  }
+
+  return {
     user,
-    properties: data?.properties || null,
+    properties,
   };
 }
 
