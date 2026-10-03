@@ -466,12 +466,55 @@ export async function POST(request) {
     );
   }
 
+    try {
+    await sendTeamInvitationEmail({
+      email,
+      organizationName:
+        auth.organization.name,
+      invitationUrl,
+    });
+  } catch {
+    if (invitedMembership?.id) {
+      try {
+        await deleteInvitedMembership({
+          supabaseUrl,
+          serviceRoleKey,
+          membershipId:
+            invitedMembership.id,
+        });
+      } catch {
+        // Preserve the original email delivery failure.
+      }
+    }
+
+    if (invitedUser?.id) {
+      try {
+        await deleteAuthUser({
+          supabaseUrl,
+          serviceRoleKey,
+          userId: invitedUser.id,
+        });
+      } catch {
+        // Preserve the original email delivery failure.
+      }
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Unable to deliver the team invitation.",
+      },
+      { status: 502 }
+    );
+  }
+
   return NextResponse.json(
     {
-      success: false,
+      success: true,
       message:
-        "Team invitation email delivery is not enabled yet.",
+        "Team invitation sent successfully.",
     },
-    { status: 501 }
+    { status: 201 }
   );
 }
